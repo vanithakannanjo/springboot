@@ -50,6 +50,9 @@ public class CourseService {
 
     }
 
+
+
+
     //load all the course from Database  // GET
     public List<CourseResponseDTO> viewAllCourses() {
         Iterable<CourseEntity> courseEntities = courseDao.findAll();
