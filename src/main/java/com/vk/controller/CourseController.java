@@ -3,7 +3,10 @@ package com.vk.controller;
 import com.vk.dto.CourseRequestDTO;
 import com.vk.dto.CourseResponseDTO;
 import com.vk.dto.ServiceResponse;
+import com.vk.util.AppUtils;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +26,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/course")
 public class CourseController {
+
+    Logger log = LoggerFactory.getLogger(CourseController.class);
     @Autowired
     private CourseService courseService;
 
@@ -32,8 +37,14 @@ public class CourseController {
 
     @PostMapping
     public ServiceResponse<CourseResponseDTO> addCourse(@RequestBody @Valid CourseRequestDTO courseRequestDTO) {
+        log.info("CourseController:addCourse request payload {}", AppUtils.convertObjectToJson(courseRequestDTO));
+        ServiceResponse<CourseResponseDTO> serviceResponse = new ServiceResponse<>();
         CourseResponseDTO newCourse = courseService.onboardNewCourse(courseRequestDTO);
-        return new ServiceResponse<>(HttpStatus.CREATED,newCourse);//201
+        serviceResponse.setStatus(HttpStatus.OK);
+        serviceResponse.setResponse(newCourse);
+
+        log.info("CourseController:addCourse response {}", AppUtils.convertObjectToJson(serviceResponse));
+        return serviceResponse;//201
     }
 
     @GetMapping
@@ -55,14 +66,21 @@ public class CourseController {
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<?> deleteCourse(@PathVariable int courseId){
+        log.info("CourseController:deleteCourse delete course with courseid {}", courseId);
         courseService.deleteCourse(courseId);
         return new ResponseEntity<>("", HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/{courseId}")
     public ServiceResponse<CourseResponseDTO> updateCourse(@PathVariable int courseId, @RequestBody CourseRequestDTO courseRequestDTO){
+        log.info("CourseController:updateCourse update course course with id {} & payload {} ", courseId, AppUtils.convertObjectToJson(courseRequestDTO));
+
+        ServiceResponse<CourseResponseDTO> serviceResponse = new ServiceResponse<>();
         CourseResponseDTO courseResponseDTO = courseService.updateCourse(courseId, courseRequestDTO);
-        return new ServiceResponse<>(HttpStatus.OK, courseResponseDTO);
+        serviceResponse.setStatus(HttpStatus.OK);
+        serviceResponse.setResponse(courseResponseDTO);
+        log.info("CourseController:updateCourse update course course with id {} & payload {} ", courseId, AppUtils.convertObjectToJson(serviceResponse));
+        return serviceResponse;
     }
 
 }

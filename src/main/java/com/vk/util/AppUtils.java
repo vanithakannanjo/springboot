@@ -1,5 +1,7 @@
 package com.vk.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vk.dto.CourseRequestDTO;
 import com.vk.dto.CourseResponseDTO;
 import com.vk.entity.CourseEntity;
@@ -42,4 +44,14 @@ public class AppUtils {
 
 
     }
+
+    public static String convertObjectToJson(Object object){
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
